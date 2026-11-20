@@ -8,6 +8,6 @@
  * Enquanto estiverem vazios, o app usa o servidor local (node servidor.mjs).
  */
 export const CONFIG = {
-  clientId: '',
-  pastaId: '',
+  clientId: '490479903628-a9gbe1rmtr0s72370tet5ts43keg2qkh.apps.googleusercontent.com',
+  pastaId: '1FNSg9pLSflXvuB5694l4gTD5qzW1gFHJ',
 };
