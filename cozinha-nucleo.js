@@ -221,6 +221,21 @@ export function detectarIntencao(frase, contexto = 'menu') {
   if (/\b(pausar|pausa|silencio|cala)\b/.test(f)) return 'pausar';
   if (/\b(anot(ar|acao|açao)|nota|comentario)\b/.test(f)) return 'anotar';
   if (/\b(mais tempo|aguard(ar|e)|esper(ar|e)|mais \d+ ?min)/.test(f)) return 'mais-tempo';
+
+  // áudio: volume e velocidade da voz
+  if (/\b(aument\w*|sobe|subir|mais)\s+(o\s+)?volume\b|\bvolume\s+(mais\s+)?(alto|maior)\b/.test(f)) {
+    return 'mais-volume';
+  }
+  if (/\b(abaix\w*|diminu\w*|baix\w*|menos)\s+(o\s+)?volume\b|\bvolume\s+(mais\s+)?(baixo|menor)\b/.test(f)) {
+    return 'menos-volume';
+  }
+  if (/\b(velocidade|voz)\s+(normal|padr[aã]o)\b|\bvolta (ao|para o) normal\b/.test(f)) return 'voz-normal';
+  if (/\b(mais\s+)?devagar\b|\b(mais\s+)?lent[oa]\b|\bdiminu\w*\s+(a\s+)?velocidade\b/.test(f)) {
+    return 'mais-devagar';
+  }
+  if (/\b(mais\s+)?r[aá]pid[oa]\b|\baceler\w*\b|\baument\w*\s+(a\s+)?velocidade\b/.test(f)) {
+    return 'mais-rapido';
+  }
   // antes de "preparar": "começar a contar" é cronômetro, não início do preparo
   if (/\b(iniciar preparo|come[cç]ar a preparar)\b/.test(f)) return 'preparar';
   if (/\b(iniciar|cronometro|marcar (o )?tempo|come[cç]ar a contar|pode contar)\b/.test(f)) return 'iniciar';

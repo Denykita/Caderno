@@ -111,8 +111,7 @@
   white-space: pre-wrap;
 }
 
-.cz-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.cz-chips span {
+.cz-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }.cz-chips span {
   font-size: 0.78rem;
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
@@ -178,6 +177,37 @@ a.cz-botao { display: inline-flex; align-items: center; justify-content: center;
 }
 .cz-relogio.urgente { color: var(--acento); }
 .cz-relogio.terminado { color: var(--muted); }
+
+/* ------------------------------------------------------------- áudio */
+
+.cz-audio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.cz-audio-linha { display: flex; align-items: center; gap: 0.4rem; }
+.cz-audio-rotulo { flex: 1; font-size: 0.82rem; color: var(--muted); }
+.cz-audio-rotulo b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.cz-mini {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--linha);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.cz-mini:hover { background: var(--acento-suave); }
+.cz-mini:active { transform: scale(0.95); }
 
 /* ------------------------------------------------------------- notas */
 

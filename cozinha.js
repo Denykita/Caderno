@@ -36,7 +36,70 @@ const estado = {
   falando: false,
   ouvindo: false,
   cron: null,
+  audio: { volume: 1, velocidade: 1 },
 };
+
+/* ------------------------------------------------------------------ áudio */
+
+const CHAVE_AUDIO = 'caderno:voz';
+const AUDIO = { volMin: 0.2, volMax: 1, volPasso: 0.2, velMin: 0.6, velMax: 1.6, velPasso: 0.1 };
+
+const limitar = (valor, minimo, maximo, padrao) => {
+  const numero = Number(valor);
+  if (!Number.isFinite(numero)) return padrao;
+  return Math.min(maximo, Math.max(minimo, numero));
+};
+const arredondar = (valor) => Math.round(valor * 10) / 10;
+
+function carregarAudio() {
+  try {
+    const salvo = JSON.parse(localStorage.getItem(CHAVE_AUDIO) || 'null');
+    if (!salvo) return;
+    estado.audio.volume = arredondar(limitar(salvo.volume, AUDIO.volMin, AUDIO.volMax, 1));
+    estado.audio.velocidade = arredondar(limitar(salvo.velocidade, AUDIO.velMin, AUDIO.velMax, 1));
+  } catch {
+    /* sem localStorage: fica no padrão */
+  }
+}
+
+function salvarAudio() {
+  try {
+    localStorage.setItem(CHAVE_AUDIO, JSON.stringify(estado.audio));
+  } catch {
+    /* segue só na sessão */
+  }
+}
+
+function renderAudio() {
+  const alvoVolume = $('#cz-vol-valor');
+  const alvoVelocidade = $('#cz-vel-valor');
+  if (alvoVolume) alvoVolume.textContent = `${Math.round(estado.audio.volume * 100)}%`;
+  if (alvoVelocidade) alvoVelocidade.textContent = `${estado.audio.velocidade.toFixed(1).replace('.', ',')}×`;
+}
+
+function ajustarVolume(delta) {
+  estado.audio.volume = arredondar(limitar(estado.audio.volume + delta, AUDIO.volMin, AUDIO.volMax, 1));
+  salvarAudio();
+  renderAudio();
+  avisar(`Volume ${Math.round(estado.audio.volume * 100)}%`);
+  falar(delta > 0 ? 'Volume mais alto.' : 'Volume mais baixo.');
+}
+
+function ajustarVelocidade(delta) {
+  estado.audio.velocidade = arredondar(limitar(estado.audio.velocidade + delta, AUDIO.velMin, AUDIO.velMax, 1));
+  salvarAudio();
+  renderAudio();
+  avisar(`Velocidade ${estado.audio.velocidade.toFixed(1).replace('.', ',')}×`);
+  falar(delta > 0 ? 'Falando mais rápido.' : 'Falando mais devagar.');
+}
+
+function velocidadeNormal() {
+  estado.audio.velocidade = 1;
+  salvarAudio();
+  renderAudio();
+  avisar('Velocidade normal');
+  falar('Velocidade normal.');
+}
 
 /* ------------------------------------------------------------------ aviso */
 
@@ -96,7 +159,8 @@ function falar(texto, aoTerminar) {
   window.speechSynthesis.cancel();
   const fala = new Fala(texto);
   fala.lang = 'pt-BR';
-  fala.rate = 1.02;
+  fala.rate = estado.audio.velocidade;
+  fala.volume = estado.audio.volume;
   if (vozEscolhida) fala.voice = vozEscolhida;
   fala.onend = terminar;
   fala.onerror = terminar;
@@ -255,6 +319,7 @@ function bipe(vezes = 1, duracao = 0.18, frequencia = 880) {
     contextoAudio ||= new (window.AudioContext || window.webkitAudioContext)();
     if (contextoAudio.state === 'suspended') contextoAudio.resume();
     const agora = contextoAudio.currentTime;
+    const pico = Math.max(0.06, 0.28 * estado.audio.volume);
     for (let i = 0; i < vezes; i++) {
       const osc = contextoAudio.createOscillator();
       const ganho = contextoAudio.createGain();
@@ -262,7 +327,7 @@ function bipe(vezes = 1, duracao = 0.18, frequencia = 880) {
       osc.frequency.value = frequencia;
       const inicio = agora + i * (duracao + 0.12);
       ganho.gain.setValueAtTime(0.0001, inicio);
-      ganho.gain.exponentialRampToValueAtTime(0.25, inicio + 0.02);
+      ganho.gain.exponentialRampToValueAtTime(pico, inicio + 0.02);
       ganho.gain.exponentialRampToValueAtTime(0.0001, inicio + duracao);
       osc.connect(ganho).connect(contextoAudio.destination);
       osc.start(inicio);
@@ -312,6 +377,7 @@ function numeroDoPasso(indice) {
 
 function abrirMenu(comFala = true) {
   mostrar('cz-menu');
+  renderAudio();
   const { roteiro } = estado;
   $('#cz-menu-meta').textContent = [
     roteiro.tempo && `⏱ ${roteiro.tempo}`,
@@ -651,6 +717,26 @@ function executar(comando) {
     else avisar('Este passo não tem tempo para marcar.');
     return;
   }
+  if (comando === 'mais-volume') {
+    ajustarVolume(AUDIO.volPasso);
+    return;
+  }
+  if (comando === 'menos-volume') {
+    ajustarVolume(-AUDIO.volPasso);
+    return;
+  }
+  if (comando === 'mais-rapido') {
+    ajustarVelocidade(AUDIO.velPasso);
+    return;
+  }
+  if (comando === 'mais-devagar') {
+    ajustarVelocidade(-AUDIO.velPasso);
+    return;
+  }
+  if (comando === 'voz-normal') {
+    velocidadeNormal();
+    return;
+  }
   if (comando === 'ok') {
     avancar();
     return;
@@ -774,6 +860,11 @@ $('#cz-erro-conectar').addEventListener('click', async () => {
     botao.disabled = false;
   }
 });
+
+$('#cz-vol-mais').addEventListener('click', () => ajustarVolume(AUDIO.volPasso));
+$('#cz-vol-menos').addEventListener('click', () => ajustarVolume(-AUDIO.volPasso));
+$('#cz-vel-mais').addEventListener('click', () => ajustarVelocidade(AUDIO.velPasso));
+$('#cz-vel-menos').addEventListener('click', () => ajustarVelocidade(-AUDIO.velPasso));
 $('#cz-nota-encerrar').addEventListener('click', () => {
   calar();
   location.href = 'index.html';
@@ -817,5 +908,7 @@ document.addEventListener('keydown', (evento) => {
   }
 });
 
+carregarAudio();
+renderAudio();
 carregar();
 atualizarStatusVoz();
