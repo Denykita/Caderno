@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Caderno de Cozinha">
+  <rect width="512" height="512" rx="116" fill="#c9502f"/>
+  <rect x="105" y="90" width="302" height="332" rx="23" fill="#fbf6f0"/>
+  <rect x="148" y="110" width="14" height="292" fill="#c9502f"/>
+  <rect x="187" y="161" width="172" height="21" rx="10" fill="#c9502f"/>
+  <rect x="187" y="218" width="172" height="21" rx="10" fill="#c9502f"/>
+  <rect x="187" y="274" width="126" height="21" rx="10" fill="#c9502f"/>
+  <rect x="187" y="335" width="92" height="21" rx="10" fill="#c9502f"/>
+</svg>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caderno de Cozinha</title>
+<meta name="description" content="Receitas, dicas e anotações de cozinha — busca por ingrediente, funciona no PC e no celular.">
+<meta name="theme-color" content="#fbf6f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icone.svg">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-in">
+    <div class="marca">
+      <b>Caderno</b><span id="marca-info">de cozinha</span>
+    </div>
+
+    <div class="busca">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path>
+      </svg>
+      <input id="q" type="search" placeholder="Receita, ingrediente, tag…  (tem: tomate / sem: forno)"
+             autocomplete="off" spellcheck="false" aria-label="Buscar no caderno">
+      <button class="limpar" id="limpar" type="button" aria-label="Limpar busca" title="Limpar busca">×</button>
+    </div>
+
+    <div class="acoes">
+      <button class="btn icone" id="btn-favoritos" type="button" aria-pressed="false" title="Mostrar só favoritos">★</button>
+      <button class="btn principal" id="btn-nova" type="button">+ Nova</button>
+    </div>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+</header>
+
+<main>
+  <div class="banner" id="conexao" hidden>
+    <b>Conecte o Google Drive</b>
+    <p>O caderno vai ler e gravar direto na sua pasta do Drive. O acesso é só seu e fica neste navegador.</p>
+    <button class="btn principal" id="btn-conectar" type="button">Conectar ao Google Drive</button>
+  </div>
+
+  <div id="status" role="status" aria-live="polite"></div>
+  <div class="grade" id="grade"></div>
+</main>
+
+<footer class="rodape">
+  <span id="rodape-info">Carregando…</span>
+  <button class="link" id="btn-backup" type="button">Baixar backup</button>
+  <span id="rodape-fonte"></span>
+</footer>
+
+<!-- ---------------------------------------------------------------- detalhe -->
+<dialog id="detalhe" aria-labelledby="d-titulo">
+  <div class="folha">
+    <div class="folha-topo">
+      <div class="folha-titulo">
+        <div class="cat" id="d-cat"></div>
+        <h2 id="d-titulo"></h2>
+        <div class="meta" id="d-meta"></div>
+      </div>
+      <button class="btn icone" id="d-fav" type="button" aria-pressed="false" title="Favoritar">★</button>
+      <button class="btn icone fecha" id="d-fechar" type="button" aria-label="Fechar" title="Fechar (Esc)">✕</button>
+    </div>
+    <div class="folha-corpo">
+      <article class="leitura" id="d-corpo"></article>
+
+      <div class="nota-form" id="d-nota-form" hidden>
+        <label for="d-nota-texto">Nova anotação</label>
+        <textarea id="d-nota-texto" rows="3" placeholder="O que funcionou, o que mudar na próxima…"></textarea>
+        <div class="linha-botoes">
+          <button class="btn" id="d-nota-cancelar" type="button">Cancelar</button>
+          <button class="btn principal" id="d-nota-salvar" type="button">Salvar anotação</button>
+        </div>
+      </div>
+    </div>
+    <div class="editor-rodape">
+      <button class="btn perigo apagar" id="d-excluir" type="button">Excluir</button>
+      <button class="btn" id="d-nota-btn" type="button">Anotar</button>
+      <button class="btn" id="d-editar" type="button">Editar</button>
+      <a class="btn principal" id="d-cozinha" href="cozinha.html">▶ Cozinhar</a>
+    </div>
+  </div>
+</dialog>
+
+<!-- ----------------------------------------------------------------- editor -->
+<dialog id="editor" aria-labelledby="e-titulo-visivel">
+  <div class="editor">
+    <div class="folha-topo">
+      <div class="folha-titulo">
+        <div class="cat" id="e-modo">Novo item</div>
+        <h2 id="e-titulo-visivel">Nova receita</h2>
+      </div>
+      <button class="btn icone fecha" id="e-fechar" type="button" aria-label="Fechar" title="Fechar">✕</button>
+    </div>
+
+    <form id="e-form" novalidate>
+      <div class="campos">
+        <div class="campo largo">
+          <label for="f-titulo">Título</label>
+          <input id="f-titulo" type="text" required maxlength="120" placeholder="Salmão grelhado com pele crocante">
+        </div>
+        <div class="campo">
+          <label for="f-categoria">Categoria</label>
+          <input id="f-categoria" type="text" list="lista-categorias" maxlength="40" placeholder="Salgados">
+          <datalist id="lista-categorias"></datalist>
+        </div>
+        <div class="campo">
+          <label for="f-tempo">Tempo</label>
+          <input id="f-tempo" type="text" maxlength="30" placeholder="15 min">
+        </div>
+        <div class="campo">
+          <label for="f-porcoes">Rendimento</label>
+          <input id="f-porcoes" type="text" maxlength="40" placeholder="2 porções">
+        </div>
+        <div class="campo">
+          <label for="f-tags">Tags</label>
+          <input id="f-tags" type="text" placeholder="salmão, rápido, jantar">
+          <span class="dica">separe por vírgula</span>
+        </div>
+        <div class="campo largo">
+          <label for="f-resumo">Resumo</label>
+          <input id="f-resumo" type="text" maxlength="240" placeholder="Uma frase que aparece no cartão (opcional)">
+        </div>
+        <div class="campo largo">
+          <label for="f-fonte">Fonte</label>
+          <input id="f-fonte" type="url" placeholder="https://… (opcional)">
+        </div>
+      </div>
+
+      <div class="area-corpo">
+        <div class="campo">
+          <label for="f-corpo">Conteúdo (markdown: ## seções, - listas, 1. passos)</label>
+          <textarea id="f-corpo" class="mono" spellcheck="true"></textarea>
+        </div>
+        <div class="previa leitura" id="e-previa" aria-hidden="true"></div>
+      </div>
+
+      <div class="editor-rodape">
+        <button class="btn perigo apagar" id="e-apagar" type="button" hidden>Excluir</button>
+        <button class="btn" id="e-previa-btn" type="button" aria-pressed="false">Ver formatado</button>
+        <button class="btn" id="e-cancelar" type="button">Cancelar</button>
+        <button class="btn principal" id="e-salvar" type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

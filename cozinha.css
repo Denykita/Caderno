@@ -1,0 +1,243 @@
+/* Modo cozinha — tela cheia, botões grandes, pouca coisa para ler. */
+
+[hidden] { display: none !important; }
+
+.cz {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overscroll-behavior: none;
+}
+
+/* ------------------------------------------------------------------ topo */
+
+.cz-topo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem 0.7rem;
+  border-bottom: 1px solid var(--linha);
+  background: var(--card);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.cz-titulo { min-width: 0; flex: 1; }
+.cz-titulo h1 {
+  font-size: 1.05rem;
+  line-height: 1.25;
+  margin-top: 0.1rem;
+  overflow-wrap: anywhere;
+}
+.cz-etiqueta {
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--acento);
+  font-weight: 700;
+}
+
+.cz-topo-acoes { display: flex; gap: 0.4rem; }
+
+.cz-icone {
+  width: 2.9rem;
+  height: 2.9rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+.cz-icone:hover { background: var(--acento-suave); }
+.cz-icone[aria-pressed="false"] { opacity: 0.45; }
+
+/* ----------------------------------------------------------------- palco */
+
+.cz-palco {
+  flex: 1;
+  display: flex;
+  padding: 1.1rem 1.1rem 1.4rem;
+  overflow-y: auto;
+}
+
+.cz-tela {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.cz-tela[hidden] { display: none; }
+
+.cz-ajuda { color: var(--muted); font-size: 0.95rem; margin: 0; }
+.cz-dica { color: var(--muted); font-size: 0.82rem; margin: 0; }
+.cz-tela h2 { font-size: 1.15rem; }
+
+.cz-progresso {
+  font-size: 0.78rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cz-texto-grande {
+  flex: 1;
+  font-size: clamp(1.25rem, 4.6vw, 1.7rem);
+  line-height: 1.4;
+  font-weight: 600;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--linha);
+  box-shadow: var(--sombra);
+  min-height: 8rem;
+  overflow-wrap: anywhere;
+}
+
+.cz-caixa {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--linha);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.cz-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.cz-chips span {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--acento-suave);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.cz-chips span.alerta { background: #f7d7c9; }
+.cz-chips.notas span { cursor: pointer; }
+.cz-chips.notas span:hover { background: var(--marca); }
+
+/* --------------------------------------------------------------- botões */
+
+.cz-botoes {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cz-botoes.secundarios { margin-top: -0.2rem; }
+
+.cz-botao {
+  flex: 1 1 auto;
+  min-height: 3.4rem;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.cz-botao:hover { background: var(--acento-suave); }
+a.cz-botao { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.cz-botao:active { transform: scale(0.985); }
+.cz-botao.grande { min-height: 4.1rem; font-size: 1.12rem; }
+.cz-botao.principal { background: var(--acento); border-color: var(--acento); color: #fff; }
+.cz-botao.principal:hover { background: var(--acento-forte); }
+.cz-botao.destaque { background: var(--acento-suave); border-color: var(--acento); color: var(--ink); }
+.cz-botao:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+/* ----------------------------------------------------------- cronômetro */
+
+.cz-cronometro-rotulo {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.cz-relogio {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: clamp(4.2rem, 22vw, 8rem);
+  line-height: 1;
+  text-align: center;
+  padding: 0.6rem 0;
+  letter-spacing: -0.02em;
+}
+.cz-relogio.urgente { color: var(--acento); }
+.cz-relogio.terminado { color: var(--muted); }
+
+/* ------------------------------------------------------------- notas */
+
+#cz-nota-texto {
+  font: inherit;
+  font-size: 1rem;
+  min-height: 7rem;
+  padding: 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--linha);
+  background: var(--card);
+  color: var(--ink);
+  resize: vertical;
+}
+
+/* -------------------------------------------------------------- rodapé */
+
+.cz-rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--linha);
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--card);
+  flex-wrap: wrap;
+}
+.cz-rodape .off { color: var(--acento); }
+
+#cz-ouvido {
+  flex: 1 1 100%;
+  min-height: 1.1em;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#cz-ouvido.entendeu { color: var(--acento); font-style: normal; font-weight: 600; }
+
+#cz-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translate(-50%, 1rem);
+  z-index: 90;
+  max-width: calc(100vw - 2rem);
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.9rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+}
+#cz-toast[data-visivel="1"] { opacity: 1; transform: translate(-50%, 0); }
+#cz-toast.erro { background: #93251a; color: #fff; }
+
+@media (max-width: 380px) {
+  .cz-botao { font-size: 0.95rem; padding: 0.65rem 0.7rem; }
+  .cz-texto-grande { font-size: 1.2rem; }
+}

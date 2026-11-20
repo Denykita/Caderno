@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modo cozinha — Caderno</title>
+<meta name="theme-color" content="#17130f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="estilo.css">
+<link rel="stylesheet" href="cozinha.css">
+</head>
+<body class="cz">
+
+<header class="cz-topo">
+  <div class="cz-titulo">
+    <span class="cz-etiqueta" id="cz-categoria"></span>
+    <h1 id="cz-titulo">Carregando…</h1>
+  </div>
+  <div class="cz-topo-acoes">
+    <button class="cz-icone" id="cz-voz" type="button" aria-pressed="true"
+            aria-label="Ligar ou desligar a voz" title="Voz">🎤</button>
+    <button class="cz-icone" id="cz-sair" type="button" aria-label="Sair do modo cozinha" title="Sair">✕</button>
+  </div>
+</header>
+
+<main class="cz-palco">
+
+  <section class="cz-tela" id="cz-carregando">
+    <p class="cz-ajuda">Abrindo a receita…</p>
+  </section>
+
+  <section class="cz-tela" id="cz-erro" hidden>
+    <h2>Não consegui abrir</h2>
+    <p class="cz-ajuda" id="cz-erro-texto"></p>
+    <a class="cz-botao" href="index.html">Voltar ao caderno</a>
+  </section>
+
+  <section class="cz-tela" id="cz-menu" hidden>
+    <p class="cz-ajuda">Diga <b>resumo</b> ou <b>preparar</b> — ou toque:</p>
+    <button class="cz-botao grande" id="cz-btn-resumo" type="button">Resumo</button>
+    <button class="cz-botao grande principal" id="cz-btn-preparar" type="button">Preparar</button>
+    <p class="cz-dica" id="cz-menu-meta"></p>
+    <p class="cz-dica" id="cz-menu-mic"></p>
+  </section>
+
+  <section class="cz-tela" id="cz-resumo" hidden>
+    <div class="cz-caixa" id="cz-resumo-texto"></div>
+    <button class="cz-botao grande principal" id="cz-btn-comecar" type="button">Começar</button>
+    <button class="cz-botao" id="cz-btn-voltar-menu" type="button">Voltar</button>
+  </section>
+
+  <section class="cz-tela" id="cz-ingrediente" hidden>
+    <div class="cz-progresso" id="cz-ing-progresso"></div>
+    <div class="cz-texto-grande" id="cz-ing-texto"></div>
+    <div class="cz-botoes">
+      <button class="cz-botao" id="cz-ing-repetir" type="button">↺ Repetir</button>
+      <button class="cz-botao principal grande" id="cz-ing-ok" type="button">✓ Tenho</button>
+      <button class="cz-botao" id="cz-ing-pular" type="button">Pular ➜</button>
+    </div>
+  </section>
+
+  <section class="cz-tela" id="cz-passo" hidden>
+    <div class="cz-progresso" id="cz-passo-progresso"></div>
+    <div class="cz-chips" id="cz-passo-chips"></div>
+    <div class="cz-texto-grande" id="cz-passo-texto"></div>
+    <div class="cz-botoes">
+      <button class="cz-botao" id="cz-passo-repetir" type="button">↺ Repetir</button>
+      <button class="cz-botao principal grande" id="cz-passo-ok" type="button">✓ Ok</button>
+      <button class="cz-botao" id="cz-passo-pular" type="button">Pular ➜</button>
+    </div>
+    <div class="cz-botoes secundarios" id="cz-passo-extra">
+      <button class="cz-botao destaque" id="cz-btn-cronometro" type="button" hidden>▶ Iniciar cronômetro</button>
+      <button class="cz-botao destaque" id="cz-btn-preaquecer" type="button" hidden>▶ Pré-aquecer 10 min</button>
+    </div>
+  </section>
+
+  <section class="cz-tela" id="cz-cronometro" hidden>
+    <div class="cz-cronometro-rotulo" id="cz-cron-rotulo"></div>
+    <div class="cz-relogio" id="cz-relogio">00:00</div>
+    <div class="cz-botoes">
+      <button class="cz-botao" id="cz-cron-mais" type="button">+10 min</button>
+      <button class="cz-botao principal grande" id="cz-cron-pronto" type="button">✓ Pronto</button>
+      <button class="cz-botao" id="cz-cron-voltar" type="button">↩ Voltar</button>
+    </div>
+    <p class="cz-dica" id="cz-cron-dica"></p>
+  </section>
+
+  <section class="cz-tela" id="cz-notas" hidden>
+    <h2>Como ficou?</h2>
+    <p class="cz-ajuda">Anote o que você quiser — vai para a receita, com a data.</p>
+    <div class="cz-chips notas" id="cz-notas-chips"></div>
+    <textarea id="cz-nota-texto" rows="5" placeholder="Ficou bom, mas na próxima coloco menos sal…"></textarea>
+    <button class="cz-botao grande principal" id="cz-nota-salvar" type="button">Salvar anotação</button>
+    <button class="cz-botao" id="cz-nota-encerrar" type="button">Encerrar sem salvar</button>
+  </section>
+
+</main>
+
+<footer class="cz-rodape">
+  <span id="cz-ouvido"></span>
+  <span id="cz-voz-status">voz</span>
+  <span id="cz-progresso-geral"></span>
+</footer>
+
+<div id="cz-toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="cozinha.js"></script>
+</body>
+</html>
