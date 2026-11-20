@@ -8,6 +8,7 @@
 
 const ORIGEM_GIS = 'https://accounts.google.com/gsi/client';
 const ESCOPO = 'https://www.googleapis.com/auth/drive';
+const CHAVE_TOKEN = 'caderno:drive-token';
 
 let promessaGis = null;
 let cliente = null;
@@ -15,6 +16,33 @@ let clienteDe = '';
 let token = null;
 let expiraEm = 0;
 let pendente = null;
+
+/**
+ * O token fica em sessionStorage para sobreviver à troca de página
+ * (caderno → modo cozinha). Morre quando a aba fecha. Não é cookie e não
+ * vai para o servidor.
+ */
+function lerTokenSalvo() {
+  try {
+    const salvo = JSON.parse(sessionStorage.getItem(CHAVE_TOKEN) || 'null');
+    if (salvo?.token && salvo?.expiraEm > Date.now()) {
+      token = salvo.token;
+      expiraEm = salvo.expiraEm;
+    }
+  } catch {
+    /* sem sessionStorage (modo privado): segue em memória */
+  }
+}
+
+function gravarToken() {
+  try {
+    sessionStorage.setItem(CHAVE_TOKEN, JSON.stringify({ token, expiraEm }));
+  } catch {
+    /* sem sessionStorage: segue em memória */
+  }
+}
+
+lerTokenSalvo();
 
 function carregarGis() {
   if (window.google?.accounts?.oauth2) return Promise.resolve();
@@ -49,6 +77,7 @@ async function garantirCliente(clientId) {
       }
       token = resposta.access_token;
       expiraEm = Date.now() + (Number(resposta.expires_in) || 3600) * 1000;
+      gravarToken();
       espera?.ok(token);
     },
     error_callback: (falha) => {
@@ -62,6 +91,7 @@ async function garantirCliente(clientId) {
 }
 
 export function temToken() {
+  if (!token) lerTokenSalvo();
   return Boolean(token) && Date.now() < expiraEm - 60_000;
 }
 
@@ -88,4 +118,9 @@ export async function pedirToken(clientId, { prompt = '', forcar = false } = {})
 export function esquecerToken() {
   token = null;
   expiraEm = 0;
+  try {
+    sessionStorage.removeItem(CHAVE_TOKEN);
+  } catch {
+    /* nada a limpar */
+  }
 }

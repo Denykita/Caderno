@@ -695,11 +695,17 @@ async function carregar() {
     if (dados.precisaConectar()) throw new Error('conecte o Drive no caderno primeiro');
     item = await dados.ler(id);
   } catch (falha) {
-    $('#cz-erro-texto').textContent = falha.message === 'receita não encontrada'
-      ? 'Essa receita não existe (talvez tenha sido excluída).'
-      : falha.message === 'conecte o Drive no caderno primeiro'
-        ? 'O Google Drive ainda não está conectado. Abra o caderno e conecte primeiro.'
-        : 'O servidor do caderno não respondeu. Ele está rodando?';
+    const faltaConectar = falha.message === 'conecte o Drive no caderno primeiro';
+    $('#cz-erro-titulo').textContent = faltaConectar ? 'Falta conectar o Drive' : 'Não consegui abrir';
+    $('#cz-erro-texto').textContent =
+      falha.message === 'receita não encontrada'
+        ? 'Essa receita não existe (talvez tenha sido excluída).'
+        : faltaConectar
+          ? 'O acesso ao Google Drive é pedido uma vez, neste navegador. Depois disso o modo cozinha abre direto.'
+          : 'O servidor do caderno não respondeu. Ele está rodando?';
+    $('#cz-erro-conectar').hidden = !faltaConectar;
+    document.title = 'Modo cozinha — Caderno';
+    $('#cz-titulo').textContent = 'Modo cozinha';
     mostrar('cz-erro');
     return;
   }
@@ -756,6 +762,18 @@ $('#cz-cron-pronto').addEventListener('click', concluirCronometro);
 $('#cz-cron-voltar').addEventListener('click', voltarDoCronometro);
 
 $('#cz-nota-salvar').addEventListener('click', salvarNota);
+
+$('#cz-erro-conectar').addEventListener('click', async () => {
+  const botao = $('#cz-erro-conectar');
+  botao.disabled = true;
+  try {
+    await dados.conectar();
+    await carregar();
+  } catch (falha) {
+    avisar(`Não deu para conectar: ${falha.message}`, 'erro');
+    botao.disabled = false;
+  }
+});
 $('#cz-nota-encerrar').addEventListener('click', () => {
   calar();
   location.href = 'index.html';

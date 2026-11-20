@@ -134,7 +134,7 @@
 .cz-botoes.secundarios { margin-top: -0.2rem; }
 
 .cz-botao {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   min-height: 3.4rem;
   padding: 0.75rem 1rem;
   font: inherit;
@@ -147,6 +147,8 @@
   cursor: pointer;
   touch-action: manipulation;
 }
+.cz-botoes > .cz-botao { flex: 1 1 auto; }
+.cz-tela > .cz-botao { width: 100%; }
 .cz-botao:hover { background: var(--acento-suave); }
 a.cz-botao { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .cz-botao:active { transform: scale(0.985); }
